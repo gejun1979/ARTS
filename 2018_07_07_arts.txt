@@ -1,0 +1,14 @@
+Algorithm:
+Word Ladder -- LeetCode
+http://oj.leetcode.com/problems/word-ladder/ 
+I implemented a brute-force algorithm to solve the problem. My solution solved the problem as graph, and I used breadth-first-search algorithm. And I've searched internet, it seems that there's not optimized algorithm for this problem.
+
+Review:
+http://www.aosabook.org/en/distsys.html
+This article is from 左耳听风, which introduces basic concepts about Scalable Web Architecture, not deep but give me a thorough view of key ingredients in distributed system design.
+
+Technique: How to track accurate connection time in signalR connection
+In my company's project, I used signalR as push-machenism between client side and cloud side. On cloud side, we have a requirement to track an accurate "client's last connection time" for each signalR connection. I found there's keepalive request between client side and server side to keep connection active. And the signalR connection has a API class PersistentConnection, which contains a method ProcessRequest to process all the requests including keepalive. So I can override ProcessRequest to track keepalive message, then I can get the accurate connection time.
+
+Share:
+SignalR is a powerful technique for push-machenism from server to web browser, and it's simple and open source. I think, for heavy  web application, we can use SignalR as push-machenism, because it contains rich APIs; for simple application, long-poll ajax can simulate push-machenism also and it's simpler.
