@@ -1,0 +1,15 @@
+Algorithm:
+Binary Tree Postorder Traversal
+https://leetcode.com/problems/binary-tree-postorder-traversal/
+I implemented the morris tree tranversal algorithm, so complicated. i can just write code now, but i still can't understand it very well. the amazing part the morris tranversal is that it only uses O(1) space.
+
+Review:
+https://www.slideshare.net/jboner/scalability-availability-stability-patterns/192
+This article is from 左耳听风, which introduces basic concepts about Scalable Web Architecture, not deep and it's so rough. I need more details.
+
+Technique: How to track accurate connection time in signalR connection
+Following last week's technique share, i need to track the keepalive time in each signalR connection, but the method in last week's share didn't work acturally. i finally found that signalR will track the keepalive message in each connection, the server side will send keepalive message to cloud side continuously. the server side don't have any hook api to track the keepalive event and timestamp, but signalR will maintain a connection status which is based on the keepalive message between server side and client side. we can use the following api:
+ITrackingConnection->IsAlive
+
+Share:
+In my company's code base, developer always write a long piece of code and don't write doc, and our code is low quality sometimes. So i have an idea: each developer can comment and rate other developer's code like 大众点评, but in anonymous. and the developer who recieves the comment and rate should fix or write doc about his code, then the code quality could be improved. and this method can also protect the reviewers.
