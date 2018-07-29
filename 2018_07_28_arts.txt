@@ -1,0 +1,21 @@
+Algorithm:
+First Missing Positive -- LeetCode
+https://leetcode.com/problems/first-missing-positive/description/
+I use the algorithm in "counting sort" to solve the problem. Note: If a number is bigger than the size of the array, then just skip the number because it's definitely not the answer.
+https://en.wikipedia.org/wiki/Counting_sort
+
+Review:
+https://www.youtube.com/watch?v=-W9F__D3oY4
+This videp is from 左耳听风, which introduces basic concepts about Scalable Web Architecture. Basic rules:
+1) Everything should be pair for redundency, replication
+2) Cache: file cache can be used to decrease cpu loading to create that file, memory cache can be used to decrease latency
+3) Every solution has upside and downside, you choose the tradeoff
+
+Technique: How to track accurate connection time in signalR connection
+用windbg调试dump的时候，命令 ~* k 意思是 dump 所有的线程栈, ~~[XXX] k 意思是 dump 指定线程的栈。
+
+Share:
+一个关于锁的设计问题：
+我司的产品是client-server架构，客户端有个类封装了客户端和服务器之间的连接的相关操作，并且全局只有一个实例。其中有两个public的method:connect和disconnect，由于他们两个会访问共享的资源并且可能在多线程环境被调用，所以有一把锁m_lock用来保护共享的数据。现在这两个method基本的实现是，一上来先请求m_lock，如果能请求到，那就连接服务器并且申请各种资源(connect)或者释放资源并且断开连接(diconnect)，操作结束以后再释放m_lock；如果请求不到，那就阻塞直到获取m_lock为止。这两个method用到现在也没出什么问题，也没死锁过。
+
+和之前的developer讨论了下，他的设计目的是，客户端对性能要求不高，所以锁的粒度粗细关系不大，而且锁的粒度粗，代码也简洁。我觉得他说的对，有时候let it be simple and stupid就是最好的方法。不过，我有一个改进，我会以非阻塞的方式访问锁，这样可以避免其他线程hang住。
