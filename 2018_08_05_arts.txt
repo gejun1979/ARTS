@@ -1,0 +1,31 @@
+Algorithm:
+Search in Rotated Sorted Array II -- LeetCode
+http://oj.leetcode.com/problems/search-in-rotated-sorted-array-ii/ 
+A sorded array is rotated, then how can we optimize the search? Same as binary search, we divide the array into two parts, then there definitely is one part which is still sorted. We can check the start, middle and end point of each part, if they are sorted then the part is sorted. And we can recursive the procedure to the unsorted part. You may ask what if the elements in the array is duplicated? In this case, we should move the point to a different element, and continue above steps.
+
+Review:
+http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones
+summary: Sessions need to be stored in a centralized data store which is accessible to all your application servers.
+
+http://www.lecloud.net/post/7994751381/scalability-for-dummies-part-2-database
+summary: switch to a better and easier to scale NoSQL database like MongoDB or CouchDB to avoid sql join
+
+http://www.lecloud.net/post/9246290032/scalability-for-dummies-part-3-cache
+summary: With “cache” I always mean in-memory caches like Memcached or Redis.
+
+http://www.lecloud.net/post/9699762917/scalability-for-dummies-part-4-asynchronism
+summary: Asynchronism 
+
+Technique: 
+How to check deadlock in windows dump?
+step1:To check the deadlock in windows dump, just run "!syncblk" in windbg, then it will show you the thread id which hold the lock.
+step2:Switch to the thread in step1, and check which threads were affected with the command " ~* e !clrstack"
+Then you can find other threads which are blocked by the deadlock, it will show you the call stack and thread id.
+
+Another thing to notice is that in c# "lock (this)" is dangerous to use, it may cause deadlock. Actrually the above deadlock problem is caused by holding a "lock (this)" deadlock. For detailed information, please check the following:
+https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/threading/thread-synchronization
+
+"Generally, it is best to avoid locking on a public type, or on object instances beyond the control of your application. For example, lock(this) can be problematic if the instance can be accessed publicly, because code beyond your control may lock on the object as well. This could create deadlock situations where two or more threads wait for the release of the same object. Locking on a public data type, as opposed to an object, can cause problems for the same reason."
+
+Share:
+Customers said IBM watson is not "Smart"; and after Google AlphaGo beated the human player, there isn't big AI news from it again. Actrually there isn't any significant products in AI area till now, most of them are visions. So AI isn't mature enough as we thought, it still needs time to develop. The situation in AI is similar as VR, beautiful vision but ugly reality.
