@@ -1,0 +1,18 @@
+Algorithm:
+This week I finished two problems, and they all use stack to track history data. This is a different way to track history data from DP. And it's time complexity is O(n).
+http://oj.leetcode.com/problems/longest-valid-parentheses/
+http://oj.leetcode.com/problems/largest-rectangle-in-histogram/
+"Largest Rectangle in Histogram" and "Longest Valid Parentheses"
+
+Review:
+http://ksat.me/a-plain-english-introduction-to-cap-theorem/
+The simplest article to describe the CAP. I can't understand what CA is, now I can. P means network failure, so CA means no network failure, because it don't have P.
+
+Technique: 
+1)Read the django tutorial: modern web framework is so amazing that developer needs to do very little work to build a website and everything is simple and graceful.
+2)SVN local codebase setup doc: svn is easy to manage local code, i know it don't have cloud feature, but that's why it's suitable to manage a private company code. i should say that it's not worse than git, and not better than git, it just is different with git.
+https://tortoisesvn.net/docs/nightly/TortoiseSVN_en/tsvn-qs-guide.html#tsvn-qs-repo 
+
+Share:
+https://blog.csdn.net/myan/article/details/73435469
+The point in above article is interesting, AI is ready to change the world, but it still need some time because people can't anticipate where we can use this powerful tool. it's kind of like you find a cristal ball. you don't know where you can use it, but you know it's definitely powerful. So what we should do is to learn it and ready to open our mind to try it.
