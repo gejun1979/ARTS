@@ -1,0 +1,13 @@
+Algorithm:
+https://leetcode.com/problems/sqrtx/description/
+https://blog.csdn.net/linhuanmars/article/details/20089131
+User binary search to solve the sqrt problem is classic, but today I learned another method: Newton's method. The csdn article didn't give details about how to get the formula, here i find another article which introduced how to get the final fomula:
+https://blog.csdn.net/ycf74514/article/details/48996383
+
+Review:
+https://www.youtube.com/watch?v=srOgpXECblk
+Consistency pattern lecture, the table in the last is very important which shows the tradeoff among different consistent solutions: backup, m-s, m-m, 2pc, paxos
+
+Technique: 
+
+Share:
