@@ -1,0 +1,50 @@
+Crack LeetCode 之 32. Longest Valid Parentheses
+
+Leetcode link: https://leetcode.com/problems/longest-valid-parentheses/description/
+
+本题有两个要点：
+1. 这类检查括号的题目一般会用栈做数据结构。左括号入栈，右括号出栈。
+2. 检查两段邻近的合法序列是否连接。比如，这个测试用例"()(())"可以分为合法序列1 "()"和合法序列2 "(())"。检查合法序列1的时候栈会清空，那么检查合法序列2的时候怎么知道它是否和合法序列1相连呢？请参考以下算法的2.2.1部分。
+
+基本算法：
+首先，我们维护一个索引start，指向合法序列的第一个字符。其次，用一个循环依次扫描每个字符，循环体里做如下判断。
+1. 如果是左括号，那么就入栈。
+2. 如果是右括号，那么检查栈是否为空。
+2.1 如果栈是空，那么说明一个合法序列已经结束，我们要把start置为当前字符i的下一个字符。
+2.2 如果栈不空，那么做出栈操作。然后再判断栈是否为空。
+2.2.1 如果栈是空，那么说明当前合法序列与上一段合法序列是相连的。本算法用当前字符索引 i - start + 1 获得合法序列的长度。例如，测试用例"()(())"可以分成合法序列1 "()"和合法序列2 "(())"。检查合法序列1的时候栈会清空，如果有2.2.1的判断的话，我们就知道合法序列1和合法序列2是连接的。类似地，我们也可以思考一下，对于"()(()"怎么处理。
+2.2.2 如果栈不空，那么使用栈顶元素的位置来计算合法序列的长度i - stackCheck.top()。
+
+本算法时间复杂度是O(n)，因为只扫描一遍；空间复杂就是栈的size，也是O(n)，因为最坏情况是都是左括号。以下为C++代码：
+
+class Solution
+{
+public:
+    int longestValidParentheses(string s)
+    {
+        if (s.empty())
+            return 0;
+
+        int start = 0;
+        int maxCount = 0;
+        stack<int> stackCheck;
+
+        for (int i = 0; i<s.length(); ++i) {
+            if (s[i] == '(')
+                stackCheck.push(i);
+            else {
+                if (stackCheck.empty())
+                    start = i + 1;
+                else {
+                    stackCheck.pop();
+
+                    int count = stackCheck.empty() ? (i - start + 1) : (i - stackCheck.top());
+                    if (count > maxCount)
+                        maxCount = count;
+                }
+            }
+        }
+
+        return maxCount;
+    }
+};
