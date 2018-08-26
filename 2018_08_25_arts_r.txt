@@ -1,0 +1,11 @@
+﻿https://github.com/donnemartin/system-design-primer#consistency-patterns
+首先，看上面这篇文章，弄清Weak consistency, Eventual consistency和Strong consistency。
+
+https://www.youtube.com/watch?v=srOgpXECblk
+对于Ryan Barrett的演讲中的表：
+https://github.com/gejun1979/ARTS/blob/master/capacitypattern.png
+
+他一共列举了5种pattern，其中m/s, m/m, 2pc和paxos值得一讲。
+1. goole的app datastore用了m/s，但是对m/s做了优化，所以具有了consistency和traction的功能，否则我们自己想想，单个master不可能实现这两个功能。
+2. Ryan讲解得很透彻，m/m类似于没有锁的多线程编程，所以不可能在全局实现transaction。
+3. 2pc因为引入了一个co-ordinator，所以导致吞吐量和延时都上升。paxos也是同样道理，但是paxos做了些优化，所以这两个指标略优。有的场景比如nasdaq，需要严格的acid，可以使用这两个pattern
