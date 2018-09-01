@@ -1,0 +1,66 @@
+﻿SQLServer 之 Nested Loop Join
+
+SQLServer的表有各种逻辑连接操作，例如“Left Outer Join”，“Inner Join”等等。但是在物理上，这些逻辑连接都会由三种不同的物理连接(physical join)实现，分别是：“Nested Loops Join”，“Merge Join”和“Hash Join”。下文将详细阐述这三种连接中的“Nested Loop Join”，其他连接类型将在后续文章中阐述。
+
+1. 什么是Nested Loop Join？
+Nested Loop Join本质上是两个循环嵌套。对于做Join操作的两个表，外层循环迭代一个表，内层循环迭代另一个表，两个表的每条记录一一匹配。一般来说，sqlserver会选择较小的表在外层循环，较大的表在内层循环。在两个表的size都不大的情况下，这种方法的性能很好。
+
+假设有两个表T1和T2，“T1 Left outer join T2”，那么我们有如下伪码说明“Nested Loop Join”。可见对于T1中的每一条记录，如果它和T2有匹配，那么输出(T1, T2)；如果扫描了整个T2表都没有找到匹配的记录，那么输出output(T1, NULL)。
+for each row in the outer table T1
+begin
+	for each row in the inner table T2
+	begin
+		if T1 joins with T2
+			output(T1, T2)
+	end
+
+	if T1 did not join T2
+		output(T1, NULL)
+end
+
+下面是范例代码：
+IF EXISTS (SELECT * FROM sysObjects WHERE Name = 'tabdemo1')
+DROP TABLE tabdemo1
+IF EXISTS (SELECT * FROM sysObjects WHERE Name = 'tabdemo2')
+DROP TABLE tabdemo2
+IF EXISTS (SELECT * FROM sysObjects WHERE Name = 'sptabdemoproc')
+DROP PROCEDURE sptabdemoproc
+GO
+CREATE TABLE tabdemo1 (ID INT PRIMARY KEY NOT NULL IDENTITY (1,1), String Varchar(150), ID2 INT)
+CREATE TABLE tabdemo2 (ID INT PRIMARY KEY NOT NULL IDENTITY (1,1), String Varchar(150), ID2 INT)
+GO
+SET NOCOUNT ON
+GO
+INSERT INTO tabdemo1 (String, ID2) VALUES (NEWID(), RIGHT(CHECKSUM(NEWID()),3))
+GO 55
+INSERT INTO tabdemo2 (String, ID2) VALUES (NEWID(), RIGHT(CHECKSUM(NEWID()),3))
+GO 660
+SET NOCOUNT OFF
+GO
+
+CREATE NONCLUSTERED INDEX [IXtabdemo1ID2] ON tabdemo1(ID2)
+CREATE NONCLUSTERED INDEX [IXtabdemo2ID2] ON tabdemo2(ID2)
+CREATE NONCLUSTERED INDEX [IXtabdemo2String] ON [dbo].[tabdemo2] ([String])
+
+GO
+
+SET STATISTICS PROFILE ON
+SELECT	*
+FROM	tabdemo1 AS A
+		INNER JOIN tabdemo2 AS B ON A.ID = B.ID2
+SET STATISTICS PROFILE OFF
+
+2. “Nested Loop Join”支持的逻辑连接
+值得注意的是，“Nested Loop Join”只支持下面几种逻辑连接操作：
+Inner join
+Left outer join
+Cross join
+Cross apply and outer apply
+Left semi-join and left anti-semi-join
+
+下面两种逻辑连接是不支持的：
+Right and full outer join
+Right semi-join and right anti-semi-join
+
+那为什么“Nested Loop Join”不支持“Right Outer Join”和“Full Outer Join”？
+因为这两种连接都可以转换为“Left outer join”。毫无疑问，“Right outer join”可以转换为“Left outer join”；对于“Full Outer Join”也是一样，我们可以把“Full Outer Join”转换为“Left Outer Join”，例如“T1 full outer join T2”等价于“T1 left outer join T2 UNION T2 left anti-semi-join T1”。
