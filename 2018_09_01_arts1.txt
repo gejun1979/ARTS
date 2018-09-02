@@ -1,0 +1,39 @@
+﻿与 table variables 相关的 sql 性能问题
+
+1. 问题：
+如果在Store Procedure使用table variables并且有相关的join操作，那么有可能导致性能问题。因为sqlserver可能会为table variable相关的Join操作选择Nested Loop Join，从而在数据集巨大的情况下会导致性能问题。下文将做实验详细分析并且给出解决方法（非常简单）。
+
+2. 实验与分析：
+IF OBJECT_ID ('SrcTable') IS NOT NULL
+	DROP TABLE SrcTable
+CREATE TABLE SrcTable (Key1 VARCHAR(150),Val1 INT)
+CREATE INDEX index_SrcTable ON SrcTable(Val1)
+GO
+
+INSERT INTO SrcTable VALUES (NEWID(),  cast(RIGHT(CHECKSUM(NEWID()),3) as int) )
+GO 100000
+
+SET NOCOUNT ON 
+DECLARE @DstTable TABLE (Key2 INT) 
+DECLARE @i INT = 0
+WHILE @i < 100000 
+BEGIN 
+	INSERT INTO @DstTable VALUES (@i) 
+	SET @i = @i + 1 
+END 
+
+SET STATISTICS profile ON 
+SELECT @i = SrcTable.Val1 FROM @DstTable INNER JOIN SrcTable ON Key2=Val1 
+SET STATISTICS profile OFF
+GO
+
+IF OBJECT_ID ('SrcTable') IS NOT NULL
+	DROP TABLE SrcTable
+go
+
+以上是实验代码，运行之后我们会发现Sqlserver为Join操作选择了Nested Loop Join。原因是Sqlserver预估@DstTable只含有一条记录（如下图），这是因为当我们的脚本导入的时候@DstTable是空导致的。另外需要注意，以上的实验代码中需要创建索引index_SrcTable，否则Sqlserver会意识到SrcTable中包含100000记录，从而无法浮现这个问题。
+
+3. 解决方法：
+非常简单，在select语句后面加上OPTION (recompile)。OPTION (recompile)可以让Sqlserver在运行时重新编译，这样就可以检测到@DstTable的变化。对于OPTION (recompile)，后续文章会有更详细的阐述。
+SELECT @i = SrcTable.Val1 FROM @DstTable INNER JOIN SrcTable ON Key2=Val1 
+OPTION (recompile)
