@@ -1,0 +1,144 @@
+第一篇 用django创建一个简单的网站
+
+0.设置开发环境
+安装你的virtual python environment。有关virtual python environment的安装，参考这篇文章：
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/development_environment
+
+安装完之后，创建并进入virtual python environment。
+mkvirtualenv my_test_environment
+
+然后安装django。
+pip3 install django
+
+
+1. 创建项目
+其次，创建你的工作目录。
+mkdir mytest 
+cd mytest
+
+使用以下命令创建项目。
+django-admin startproject mytest
+cd mytest
+
+我们得到如下目录结构。
+.
+├── manage.py
+└── mytest
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+__init__.py是一个空文件，他的作用是让python知道这个目录作是一个package。
+settings.py包含了对该项目的各种设置，例如密钥、时区、数据库配置信息以及注册包含的package等等。
+urls.py定义了url到各个view的映射。
+wsgi.py用来帮助你的应用和web server通信。（需要补充）
+manage.py包含了一个功能丰富的管理脚本，可以用来启动webserver、管理网站网站配置以及管理数据库配置等等。
+
+2.创建myapp应用
+接下来，在mytest目录下创建myapp。注意：我们需要在manage.py的同级目录下运行以下命令。
+python3 manage.py startapp myapp
+.
+├── manage.py
+├── myapp
+│   ├── admin.py
+│   ├── apps.py
+│   ├── __init__.py
+│   ├── migrations
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── tests.py
+│   └── views.py
+└── mytest
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-36.pyc
+    │   └── settings.cpython-36.pyc
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+
+admin.py（需要补充）
+apps.py（需要补充）
+migrations用来保存django生成的数据库的封装脚本，这些脚本的目的是是数据库的实现对上层应用透明，而且便于上层应用访问数据库。
+以下三个文件顾名思义，分别对应model、测试和view。
+models.py
+tests.py
+views.py
+
+3.注册myapp应用
+我们在settings.py文件的INSTALLED_APPS中注册新的应用。打开locallibrary/locallibrary/settings.py文件，找到INSTALLED_APPS，添加一行：
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myapp.apps.MyappConfig',
+]
+
+4.指定数据库
+我们使用默认的数据库sqllite3，这对于我们的demo已经足够了。数据库的设置也在settings.py文件中。
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+5.设置URL mapper
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+当我们创建项目的时候，会生成一个一个urls.py文件，如上所示。我们既可以通过配置这个文件来映射url到view，也可以映射url到另一个url配置文件，在第二种情况下这个url会成为另一个url配置文件的root url。默认情况下，这个配置文件会映射'admin/'到admin.site.urls,这是django自带的admin应用的url。
+
+1)在myapp下，添加一个新文件myapp.urls如下。这个文件定义了一个空的urlpatterns，我们会在下文中添加相关的映射。
+from django.urls import path
+from myapp import views
+
+urlpatterns = [
+]
+
+2)在mytest/urls.py中追加以下代码。这段代码的目的是映射myapp到myapp/myapp.urls。
+from django.conf.urls import include
+from django.urls import path
+
+urlpatterns += [
+    path('myapp/', include('myapp.urls')),
+]
+
+3)因为在这个demo中，只有一个应用myapp，所以让我们把对root url的访问映射到myapp上。在mytest/urls.py中追加如下代码。对于RedirectView，请参考https://docs.djangoproject.com/en/2.1/ref/class-based-views/base/
+
+from django.views.generic import RedirectView
+urlpatterns += [
+    path('', RedirectView.as_view(url='/myapp/')),
+]
+
+（补充）
+问题：为什么不直接写path('', include('myapp.urls'))，而是要redirect？
+也可以path('', include('myapp.urls'))，但是这样的话，对外呈现的逻辑目录会比较混乱。而且如果有多个应用的话，难免会url冲突。
+
+4)Django默认不支持静态文件，例如CSS、JavaScript和图片等等。但是方便开发，我们可以在开发环境下打开支持。我们可以在urls.py中添加如下代码。
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+6.测试
+1）django会根据model代码中的数据结构生成migration脚本，这些脚本会把model的数据结构映射到数据库，并且封装数据库操作，便于上层应用调用数据库接口。我们创建mytest项目的时候，django会自动为自带的admin应用生成一些数据结构，所以我们需要生成并应用migration脚本。
+运行以下命令，生成并应用migration脚本。在mytest/myapp/migrations/目录中可以找到这些生成的脚本。
+python3 manage.py makemigrations
+python3 manage.py migrate
+
+python3 manage.py makemigrations仅仅用来生成脚本但不会应用这些脚本，python3 manage.py migrate则会应用生成的脚本。
+
+2）测试
+为了便于开发，django自带了一个web server。以下命令可以启动这个web server。
+python3 manage.py runserver
+
+在浏览器中输入http://127.0.0.1:8000/myapp/，你会看到一个报错页面。这是预期的情况，因为我们并没配置myapp/urls.py。

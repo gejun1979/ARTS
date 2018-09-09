@@ -1,0 +1,19 @@
+当我们有对于同一份数据的多份拷贝的时候，就需要在多份拷贝间同步。在分布式环境下读取一份数据的时候有三种情况：一是返回错误；二是有过期数据返回；三是有最新数据返回。
+
+Weak consistency
+一个端点写入的数据，其他端点不一定能正确读到。这种情况就是Weak consistency。例如，缓存机制或者实时语音。当我们在实时语音通话中，一端发送的语音，另一端接收的时候可能有一些数据没收到。
+
+Eventual consistency
+一个端点写入的数据，其他端点读取的时候虽然能读到数据，但有时候会读到过期数据，也就是各个数据拷贝是异步更新。不过，最终所有端点都会读到最新数据。例如，dns服务。
+
+Strong consistency
+一个端点写入的数据，其他端点读取的时候都能读到最新数据，也就是各个数据拷贝是同步更新。Strong consistency适合需要transactions机制的场景，例如RDBMS。
+
+https://www.youtube.com/watch?v=srOgpXECblk
+对于Ryan Barrett的演讲中的表：
+https://github.com/gejun1979/ARTS/blob/master/capacitypattern.png
+
+他一共列举了5种pattern，其中m/s, m/m, 2pc和paxos值得一讲，backup可以忽略因为没人会在分布式系统中用backup pattern。
+1. m/m类似于没有锁的多线程编程，所以不可能在全局实现transaction。但是m/m有一个全局时钟在各个master之间同步，保证各个master在时钟上是一致的。
+(以下内容需要补充)
+2. 2pc因为引入了一个co-ordinator，所以导致吞吐量和延时都上升。paxos也是同样道理，但是paxos做了些优化，所以这两个指标略优。有的场景比如nasdaq，需要严格的acid，可以使用这两个pattern。

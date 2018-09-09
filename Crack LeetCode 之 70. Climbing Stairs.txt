@@ -1,0 +1,43 @@
+Crack LeetCode 之 70. Climbing Stairs
+
+https://leetcode.com/problems/climbing-stairs/description/
+
+假设对于n阶楼梯，一共有f种走法。然后分两种情况：
+1.先迈出一步，对于剩下的n-1阶楼梯一共有f1种走法；
+2.先迈出两步，对于剩下的n-2阶楼梯一共有f2种走法。
+那么f=f1+f2。显然这是斐波那契数列的公式，所以这道题实际上是求斐波那契数列。
+
+以下是实现代码，时间复杂度是O(n)，空间复杂度是O(1)。
+
+class Solution {
+public:
+	int climbStairs(int n) {
+		int f1 = 1;
+		int f2 = 2;
+
+		if (n == 1)
+			return f1;
+
+		if (n == 2)
+			return f2;
+
+		int f3 = 0;
+		while ( (n-2) > 0 ) {
+			--n;
+
+			f3 = f1 + f2;
+			f1 = f2;
+			f2 = f3;
+		}
+
+		return f3;
+	}
+};
+
+扩展：
+对于这类斐波那契数列问题，面试的时候可能还会问，有没有更优的解法？有的，因为斐波那契数列有通项公式并且这是个n次幂的公式，所以我们可以用分治法来求解，该算法时间复杂度为O(logn)。
+另外，我们也可以用斐波那契数列的线性代数解法求解这个问题。可以看到数列的第n个数就是一个简单矩阵的n-2次幂，同样用分治法就可以完成O(logn)的求解。不过这些知识只要知道就行了。
+通项公式和线性代数公式参见
+https://zh.wikipedia.org/wiki/%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97
+分治法的算法如下
+https://blog.csdn.net/linhuanmars/article/details/20092829

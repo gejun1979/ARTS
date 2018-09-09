@@ -1,0 +1,33 @@
+﻿Crack LeetCode 之 621. Task Scheduler
+
+Leetcode link: https://leetcode.com/problems/task-scheduler/description/
+
+基本要点：
+这道题的本质是求冷却矩形的面积。所谓冷却矩形就是由任务数最多的任务类型乘以冷却时间得到的矩形。把所有任务填充这个矩形，如果能填满或者大于矩形面积，就不会有冷却的问题，那么所需的最少interval就是任务总数；否则最少的interval就是冷却矩形面积。
+
+算法：
+1.我们要对所有任务分类并且计数，然后再按照任务数量对所有任务排序。
+2.计算冷却矩形面积。冷却矩形实际上是由一个矩形加一个小尾巴delta组成的，所以
+冷却矩形的面积 = “（任务数最多的任务类型 - 1）X 冷却时间 + delta”
+这个delta是任务数最多的任务类型个数，因为任务最多的任务类型可能不止一个。
+3.如果任务总数大于冷却矩形的面积，那么直接返回任务总数；否则冷却矩形的面积就是结果。
+
+以下是C++代码：
+class Solution
+{
+public:
+	int leastInterval(vector<char>& tasks, int n)
+	{
+		int map[26] = {0};
+		for (char c : tasks)
+			map[c - 'A']++;
+		std::sort(map, map+26);
+
+		int delta = 0;
+		int cooling_rectangle = (map[25] - 1) * (n + 1);
+		for (int i = 25; i >= 0 && map[i] == map[25]; --i)
+			delta++;
+
+		return tasks.size() <= (cooling_rectangle + delta) ? (cooling_rectangle + delta) : tasks.size();
+	}
+};

@@ -1,0 +1,65 @@
+﻿Crack LeetCode 之 621. Task Scheduler
+
+Leetcode link: https://leetcode.com/problems/next-permutation/
+
+这道题要求不能使用extra memory，所以不能使用递归。下面的算法使用3次扫描解决这个问题：
+1. 从右往左扫，找到第一个比前一个元素小的元素p；
+7 8 9 3 2 1
+这里p=8
+2. 从右往左扫，找到第一个比p大的元素q；
+7 8 9 3 2 1 
+这里q=9
+3. 交换 p 和 q；
+交换之前：
+7 8 9 3 2 1 
+交换之后：
+7 9 8 3 2 1 
+4. 把从p+1到nums.length的所有元素倒序。
+7 9 1 2 3 8 
+
+以下是C++代码，时间复杂度是O(n)，空间复杂度是O(1)。
+
+class Solution {
+public:
+	void nextPermutation(vector<int>& nums) {
+		if (nums.size()<2)
+			return;
+
+		int p = 0;
+		for (int i = nums.size() - 2; i >= 0; i--) {
+			if (nums[i]<nums[i + 1]) {
+				p = i;
+				break;
+			}
+		}
+
+		int q = 0;
+		for (int i = nums.size() - 1; i>p; i--) {
+			if (nums[i]> nums[p]) {
+				q = i;
+				break;
+			}
+		}
+
+		if (p == 0 && q == 0) {
+			reverse(nums, 0, nums.size() - 1);
+			return;
+		}
+
+		int temp = nums[p];
+		nums[p] = nums[q];
+		nums[q] = temp;
+
+		reverse(nums, p + 1, nums.size() - 1);
+	}
+
+	void reverse(vector<int>& nums, int left, int right) {
+		while (left<right) {
+			int temp = nums[left];
+			nums[left] = nums[right];
+			nums[right] = temp;
+			left++;
+			right--;
+		}
+	}
+};
