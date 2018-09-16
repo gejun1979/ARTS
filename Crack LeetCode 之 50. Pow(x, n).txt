@@ -1,0 +1,24 @@
+Crack LeetCode 之 50. Pow(x, n)
+
+https://leetcode.com/problems/powx-n/description/
+
+本题的思想是二分法，先求n/2次幂，然后两两相乘得到结果；而求n/2次幂，可采用递归迭代的方法。该解法的时间复杂度是O(Log(n))，空间复杂度也是O(Log(n))。以下是实现代码：
+
+class Solution {
+public:
+	double myPow(double x, int n) {
+		if (n == 0)
+			return 1;
+
+		double half = myPow(x, n/2);
+
+		if (n % 2 == 0)
+			return half * half;
+		else if ( n > 0)
+			return half * half * x;
+
+		return half * half / x;
+	}
+};
+
+本题还有一种解法。n实际上等于每一位上2的幂之和，所以求x的n次方，等价于把n非结尾·分解为2的幂的和，容纳后求x的2次幂的积。假设n=12，那么n = 2的3次方+2的2次方=8+4。那么求x的12次幂，等价于x的8次方乘以x的4次方。所以，我们只要按照n的各个位的值求2次幂迭代求x的积，就能得到结果，该算法的时间复杂度是O(Log(n))，空间复杂度也是O(1)。
