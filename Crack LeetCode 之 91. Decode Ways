@@ -1,0 +1,79 @@
+https://leetcode.com/problems/decode-ways/description/
+
+本题可以用动态规划解。对于一个字符串s，假设其长度为length，并且有一个长度为(length+1)的int数组statusVec。对于statusVec的任意一个元素statusVec[i]，它的含义是前i个数字组成的字符串有多少种解法。
+
+当新加进来一个数字的时候，根据该字符与前一个字符组成的子串有如下几种情况来计算sum。假设当前字符为s[i]，则前一个字符为s[i-1]：
+1. 如果s[i]是'0'，并且s[i-1]是'1'或者'2'，也就是说s[i-1]与s[i]组合成了'10'或者'20'，那么sum就是statusVec[i-1]；这是因为'0'是无解的，它一定要和前一个字符组合成有效子串才有解。而只有当前一个字符是'1'或者'2'的时候，才能组成合法的子串。
+2. 如果s[i]是'0'，并且s[i-1]不是'1'或者'2'，那么'0'和前一个字符无法组成合法的子串，所以字符串s无解。
+3. 如果s[i-1]与s[i]无法组合成一个可解析的子串，那么sum就是statusVec[i]。以下三种情况无法组成有效子串：
+如果s[i-1]是'0'，那么会生成类似'0X'的子串，例如'07'，'08'等等；
+如果s[i-1]大于'2'，那么会生成类似'3X'，'4X'，'5X'，。。。，'9X'的子串；
+如果s[i-1]是'2'但是s[i]大于'6'，那么会生成子串'27'，'28'和'29'。
+4. 如果s[i-1]和s[i]是除了以上的其他情况（例如：'11'，'23'等等），也就是说s[i-1]与s[i]能组合成一个可解析的子串，那么sum就是statusVec[i]+statusVec[i-1]。
+
+c++代码如下，算法的时间复杂度是O(n)，空间复杂度也是O(n)。
+
+class Solution {
+public:
+	int numDecodings(string s) {
+		if (s.empty() || s[0] == '0')
+			return 0;
+
+		vector<int> statusVec;
+		statusVec.push_back(1);
+		statusVec.push_back(1);
+
+		for (int i = 1; i<s.length(); ++i) {
+			if (s[i] == '0') {
+				if (s[i-1] == '1' || s[i-1] == '2')
+					statusVec.push_back(statusVec[i - 1]);
+				else
+					return 0;
+			}
+			else {
+				if ((s[i - 1] == '0') || (s[i - 1] > '2') || (s[i - 1] == '2' && s[i] > '6'))
+					statusVec.push_back(statusVec[i]);
+				else
+					statusVec.push_back(statusVec[i]+ statusVec[i - 1]);
+			}
+		}
+
+		return  statusVec[statusVec.size() - 1];
+	};
+};
+
+以上算法还可以被优化。因为实际上我们只需要用statusVec的最后两个元素，所以我们不需要生成一个数组，只要有两个变量记录最后两个数字对应的解法数目就行了。代码如下，算法的时间复杂度是O(n)，空间复杂度也是O(n)。
+
+class Solution {
+public:
+	int numDecodings(string s) {
+		if (s.empty() || s[0] == '0')
+			return 0;
+
+		int num1 = 1;
+		int num2 = 1;
+		int sum = 1;
+
+		for (int i = 1; i<s.length(); ++i) {
+			if (s[i] == '0') {
+				if (s[i - 1] == '1' || s[i - 1] == '2')
+					sum = num2;
+				else
+					return 0;
+			}
+			else {
+				if ((s[i - 1] == '0') || (s[i - 1] > '2') || (s[i - 1] == '2' && s[i] > '6'))
+					sum = num1;
+				else
+					sum = num1 + num2;
+			}
+
+			num2 = num1;
+			num1 = sum;
+		}
+
+		return sum;
+	};
+};
+
+顺便总结一下动态规划，动态规划实际上是通过查询一个状态数组来获取最终结果，但是怎么生成这个状态数组以及根据什么属性生成状态数组则是千变万化，只能具体问题具体分析。这个没法用语言表述，动态规划的题目做的多了自然会有感觉。另外，动态规划适合解求总数但不需要求每个具体结果的题目，例如本题求有多少种解码方法可用动态规划，但是要列举出所有的解法就无法用动态规划，只能穷举。
