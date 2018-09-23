@@ -1,0 +1,12 @@
+本周的S和R。
+Review:
+本周读了以下几篇文章
+
+1. Pull与Push CDN 的区别。前者适合频繁更新的情况，pull可以减少server loading，缺点是cache会导致客户端看到的内容不一定最新；后者适合CDN的内容不需要经常更新的场合，可以保证库护短看客户端看到的内容最新。
+http://www.travelblogadvice.com/technical/the-differences-between-push-and-pull-cdns/
+
+2. 看完之后，我觉得现代的load balancer和reverse proxy是一体的，你中有我，我中有你，实在没必要做区分。
+https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/
+
+Sharing:
+看了耗哥读友群里面对于是否有必要做算法题的讨论，我觉得是很有必要的。除了算法题能让我们更好地理解算法以外，这也是大公司面试的必由之路。很多人都说面试考算法无用，但试问换了你是面试官，你怎么在短短两小时内，区分人才的三六九等？我之前读过的一篇文章讲的是，面试官有哪些筛选人才的好办法。数据证明单纯聊工作经验并不是好办法，智力题更不靠谱。比较有效的方法是算法题和学历。我知道这两个方法不完美，但这已经是目前最有效的办法了。
