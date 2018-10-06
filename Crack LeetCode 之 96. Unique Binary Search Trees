@@ -1,0 +1,27 @@
+Crack LeetCode 之 96. Unique Binary Search Trees
+
+https://leetcode.com/problems/unique-binary-search-trees/description/
+
+这道题的本质是求可能的二叉树的形态总数。任选一个节点做根节点，将左右两边可能的二叉树形态的数目相乘得到一个结果数。按照以上方法遍历所有的节点并累加结果数即可。可以采用动态规划的方法，用一个res数组保存从0到n个节点对应的结果数。另外，本题也是一个经典的卡特兰数问题，具体讨论参见link。
+
+以下为C++代码，时间复杂度为O(n平方)，空间复杂度为O(n)。
+
+class Solution {
+public:
+	int numTrees(int n) {
+		if (n == 0)
+			return 0;
+
+		vector<int> res;
+		res.push_back(1);
+		res.push_back(1);
+
+		for (int i = 1; i<n; ++i) {
+			res.push_back(0);
+			for (int j = 0; j<=i; ++j)
+				res[i+1] += res[i-j]*res[j];
+		}
+
+		return res[n];
+	}
+};
