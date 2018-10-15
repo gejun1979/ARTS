@@ -1,0 +1,33 @@
+Crack LeetCode 之 53. Maximum Subarray
+
+https://leetcode.com/problems/maximum-subarray/description/
+
+下文除了代码以外，部分引用和整理自下文。
+https://blog.csdn.net/linhuanmars/article/details/21314059
+
+这是一道非常经典的动态规划题，本题的思路在别的动态规划题中也很常用，以后我们称之为“局部最优和全局最优解法”。
+基本思路是：在每一步我们维护两个变量，一个是全局最优，就是到当前元素为止的最优解；另一个是局部最优解，就是必须包含当前元素的最优的解。
+假设我们已知第i步的local[i]（局部最优）和global[i]（全局最优），那么第i+1步的局部最优和全局最优分别是：
+1）local[i+1]=max(A[i+1], local[i]+A[i+1])
+也就是说局部最优是一定要包含当前元素的。所以有两种情况：如果local[i]大于0，那么local[i+1]就是上一步的局部最优local[i]+当前元素A[i+1]；如果local[i]小于0，那么local[i+1]就是A[i+1]。
+2）global[i+1]=max(local[i+1],global[i])
+有了当前的局部最优解，那么全局最优就是当前的局部最优和原来的全局最优中的较大值。
+
+以下为C++代码，时间复杂度为O(n)，空间复杂度为O(1)。
+
+class Solution {
+public:
+	int maxSubArray(vector<int>& nums) {
+		if (nums.empty())
+			return 0;
+
+		int global = nums[0];
+		int local = nums[0];
+		for (int i = 1; i<nums.size(); ++i) {
+			local = max(nums[i], local + nums[i]);
+			global = max(global, local);
+		}
+
+		return global;
+	}
+};
