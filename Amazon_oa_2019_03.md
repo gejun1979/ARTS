@@ -49,30 +49,26 @@ struct tree_node
 
 pair<tree_node*, double> max_res;
 
-pair<tree_node*, double> helper(tree_node * root, int & sum, int & count)
+void helper(tree_node * root, int & sum, int & count)
 {
 	if (root == NULL)
-		return pair<tree_node*, double>(NULL, 0.0);
+		return;
 	
 	int l_sum = 0;
 	int l_count = 0;
-	auto l_res = helper(root->left, l_sum, l_count);
-	if (l_res.second > max_res.second)
-		max_res = l_res;
+	helper(root->left, l_sum, l_count);
 
 	int r_sum = 0;
 	int r_count = 0;
-	auto r_res = helper(root->right, r_sum, r_count);
-	if (r_res.second > max_res.second)
-		max_res = r_res;
+	helper(root->right, r_sum, r_count);
 
 	sum = root->value + l_sum + r_sum;
 	count = 1 + l_count + r_count;
-	pair<tree_node*, double> root_res(root, (double)sum / count);
-	if (root_res.second > max_res.second)
-		max_res = root_res;
-
-	return root_res;
+	double avg = (double)sum / count;
+	if (avg > max_res.second) {
+		max_res.first = root;
+		max_res.second = avg;
+	}
 }
 
 tree_node * get_largest_subtree(tree_node * root)
@@ -91,10 +87,10 @@ int main()
 {
 	tree_node * n_3_1 = new tree_node(-1, NULL, NULL);
 	tree_node * n_3_2 = new tree_node(1, NULL, NULL);
-	tree_node * n_3_3 = new tree_node(95, NULL, NULL);
+	tree_node * n_3_3 = new tree_node(5, NULL, NULL);
 	tree_node * n_3_4 = new tree_node(-1, NULL, NULL);
 	tree_node * n_2_1 = new tree_node(-2, n_3_1, n_3_2);
-	tree_node * n_2_2 = new tree_node(-14, n_3_3, n_3_4);
+	tree_node * n_2_2 = new tree_node(14, n_3_3, n_3_4);
 	tree_node * n_1_1 = new tree_node(2, n_2_1, n_2_2);
 
 	auto result = get_largest_subtree(n_1_1);
